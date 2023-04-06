@@ -5,6 +5,9 @@ import styles from '@/styles/Home.module.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
+const marvelURL = "http(s)://gateway.marvel.com/";
+const access = `${process.env.MARVEL_PUBLIC_KEY}`;
+
 export default function Home() {
   return (
     <>
@@ -18,6 +21,7 @@ export default function Home() {
         <h1>Marvel Character Search</h1>
         <p>Enter Character Name Below</p>
         <input type="text" />
+        <button>Search</button>
       </main>
     </>
   )
