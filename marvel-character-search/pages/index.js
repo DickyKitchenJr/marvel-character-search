@@ -1,14 +1,48 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import { Inter } from "next/font/google";
+import styles from "@/styles/Home.module.css";
+import characterDisplay from "@/components/characterDisplay";
+import { useState } from "react";
+import { MD5 } from "crypto-js";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
-const marvelURL = "http(s)://gateway.marvel.com/";
-const access = `${process.env.MARVEL_PUBLIC_KEY}`;
+// set MD5 hash per Marvel API requirements
+const getHash = (ts, privateAPI, publicAPI) => {
+  return MD5(ts + privateAPI + publicAPI).toString();
+};
+
+// TODO: Determine why API keys are returning as undefined and preventing access to the API
+// set parts required to form GET request with the exception of the user input
+const marvelAPIForCharacters =
+  "https://gateway.marvel.com/v1/public/characters/";
+let ts = Date.now().toString();
+const publicAPI = process.env.MARVEL_PUBLIC_KEY;
+const privateAPI = process.env.MARVEL_PRIVATE_KEY;
+let hash = getHash(ts, publicAPI, privateAPI);
 
 export default function Home() {
+  // set the user input to be used with API request
+  const [characterName, setCharacterName] = useState("");
+
+  const [data, setData] = useState([]);
+
+  // combine user input with required GET request parts, send request, and return data
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(hash);
+    console.log(ts);
+    console.log(publicAPI);
+    console.log(privateAPI);
+    let url = `${marvelAPIForCharacters}${characterName}?ts=${ts}&apikey=${publicAPI}&hash=${hash}`;
+    fetch(url)
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+      });
+  };
+
   return (
     <>
       <Head>
@@ -19,10 +53,15 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <h1>Marvel Character Search</h1>
-        <p>Enter Character Name Below</p>
-        <input type="text" />
-        <button>Search</button>
+        <form onSubmit={handleSubmit}>
+          <label>Enter Character Name</label>
+          <input
+            type="text"
+            onChange={(e) => setCharacterName(e.target.value)}
+          />
+          <button type="submit">Search</button>
+        </form>
       </main>
     </>
-  )
+  );
 }
