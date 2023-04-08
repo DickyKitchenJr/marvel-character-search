@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import characterDisplay from "@/components/characterDisplay";
 import { useState } from "react";
-import { MD5 } from "crypto-js";
+import MD5 from "crypto-js/md5";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,14 +13,14 @@ const getHash = (ts, privateAPI, publicAPI) => {
   return MD5(ts + privateAPI + publicAPI).toString();
 };
 
-// TODO: Determine why API keys are returning as undefined and preventing access to the API
+// TODO: send data to characterDisplay and begin working on mapping through data and displaying appropriate parts
 // set parts required to form GET request with the exception of the user input
 const marvelAPIForCharacters =
-  "https://gateway.marvel.com/v1/public/characters/";
+  "https://gateway.marvel.com/v1/public/characters?nameStartsWith=";
 let ts = Date.now().toString();
-const publicAPI = process.env.MARVEL_PUBLIC_KEY;
-const privateAPI = process.env.MARVEL_PRIVATE_KEY;
-let hash = getHash(ts, publicAPI, privateAPI);
+const publicAPI = process.env.NEXT_PUBLIC_MARVEL_PUBLIC_KEY;
+const privateAPI = process.env.NEXT_PUBLIC_MARVEL_PRIVATE_KEY;
+let hash = getHash(ts, privateAPI, publicAPI);
 
 export default function Home() {
   // set the user input to be used with API request
@@ -35,7 +35,7 @@ export default function Home() {
     console.log(ts);
     console.log(publicAPI);
     console.log(privateAPI);
-    let url = `${marvelAPIForCharacters}${characterName}?ts=${ts}&apikey=${publicAPI}&hash=${hash}`;
+    let url = `${marvelAPIForCharacters}${characterName}&ts=${ts}&apikey=${publicAPI}&hash=${hash}`;
     fetch(url)
       .then((res) => res.json())
       .then((json) => {
