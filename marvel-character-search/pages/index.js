@@ -31,15 +31,32 @@ export default function Home() {
   // combine user input with required GET request parts, send request, and return data
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(hash);
-    console.log(ts);
-    console.log(publicAPI);
-    console.log(privateAPI);
     let url = `${marvelAPIForCharacters}${characterName}&ts=${ts}&apikey=${publicAPI}&hash=${hash}`;
     fetch(url)
       .then((res) => res.json())
       .then((json) => {
-        console.log(json);
+        // verifies character exists and console.logs the results
+        if (json.data.count === 0) {
+          console.log("no character found");
+        } else {
+          const characters = json.data.results.map((info) => {
+            // if character does exist returns name and description if available
+            if (info.name) {
+              console.log(info.name);
+            }
+            if (info.description) {
+              console.log(info.description);
+            } else {
+              console.log("no description available");
+            }
+            // console.logs first part of image page TODO: review calling images on Marvel API
+            if (info.thumbnail) {
+              console.log(info.thumbnail.path);
+            }
+          });
+          console.log(json);
+          console.log(json.data.results);
+        }
       });
   };
 
