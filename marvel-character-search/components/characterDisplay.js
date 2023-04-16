@@ -1,11 +1,16 @@
-import React from 'react'
+import React from "react";
 
-function characterDisplay(data) {
+function CharacterDisplay({ data }) {
+  
   return (
     <>
+      <p>Here I Am!</p>
+    
       {/*TODO: create function that accomplishes:
       if data has information (is true) set display to visible, else set display to none  */}
-
+      
+      {!data[0] ? <h2>No Data</h2> : <h2>Data Recieved</h2>}
+      
       {/* TODO: if data contains more than one character show each character name for user
       to select which character they want, else if only one character is in data show character picture and bio */}
 
@@ -15,4 +20,4 @@ function characterDisplay(data) {
   );
 }
 
-export default characterDisplay
+export default CharacterDisplay;
