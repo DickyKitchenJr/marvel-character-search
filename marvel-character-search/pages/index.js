@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
-import characterDisplay from "@/components/characterDisplay";
+import CharacterDisplay from "@/components/CharacterDisplay";
 import { useState } from "react";
 import MD5 from "crypto-js/md5";
 
@@ -25,7 +25,7 @@ let hash = getHash(ts, privateAPI, publicAPI);
 export default function Home() {
   // set the user input to be used with API request
   const [characterName, setCharacterName] = useState("");
-
+  // set the data to be passed to characterDisplay.js
   const [data, setData] = useState([]);
 
   // combine user input with required GET request parts, send request, and return data
@@ -39,6 +39,7 @@ export default function Home() {
         if (json.data.count === 0) {
           console.log("no character found");
         } else {
+          // TODO: change so that map returns an object of set values for name, description and img then save it to setData
           const characters = json.data.results.map((info) => {
             // if character does exist returns name and description if available
             if (info.name) {
@@ -56,6 +57,8 @@ export default function Home() {
           });
           console.log(json);
           console.log(json.data.results);
+          // sets data to json.data.results so it can be passed to characterDisplay.js
+          return setData(json.data.results);
         }
       });
   };
@@ -78,6 +81,7 @@ export default function Home() {
           />
           <button type="submit">Search</button>
         </form>
+        <CharacterDisplay data = {data} />
       </main>
     </>
   );
