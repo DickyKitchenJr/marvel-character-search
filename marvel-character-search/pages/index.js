@@ -35,30 +35,24 @@ export default function Home() {
     fetch(url)
       .then((res) => res.json())
       .then((json) => {
-        // verifies character exists and console.logs the results
+        // verifies character exists sets data to message if not
         if (json.data.count === 0) {
-          console.log("no character found");
+          return setData(['No Character Found']);
         } else {
-          // TODO: change so that map returns an object of set values for name, description and img then save it to setData
+          //map returns an object of set key:values for name, description and img
           const characters = json.data.results.map((info) => {
-            // if character does exist returns name and description if available
-            if (info.name) {
-              console.log(info.name);
-            }
-            if (info.description) {
-              console.log(info.description);
-            } else {
-              console.log("no description available");
-            }
-            // console.logs first part of image page TODO: review calling images on Marvel API
-            if (info.thumbnail) {
-              console.log(info.thumbnail.path);
+            return {
+              id: info.id,
+              name: info.name,
+              description: info.description,
+              image: info.thumbnail.path + "/portrait_fantastic.jpg",
             }
           });
+          // adds attribution credit to be used per Marvel API rules
+          characters.credit = json.attributionHTML;
           console.log(json);
-          console.log(json.data.results);
-          // sets data to json.data.results so it can be passed to characterDisplay.js
-          return setData(json.data.results);
+          // sets data to character so it can be passed to characterDisplay.js
+          return setData(characters);
         }
       });
   };
