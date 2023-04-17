@@ -1,5 +1,4 @@
 import Head from "next/head";
-import Image from "next/image";
 import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import CharacterDisplay from "@/components/CharacterDisplay";
@@ -8,13 +7,11 @@ import MD5 from "crypto-js/md5";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// set MD5 hash per Marvel API requirements
+//PURPOSE: set MD5 hash per Marvel API requirements
 const getHash = (ts, privateAPI, publicAPI) => {
   return MD5(ts + privateAPI + publicAPI).toString();
 };
 
-// TODO: send data to characterDisplay and begin working on mapping through data and displaying appropriate parts
-// set parts required to form GET request with the exception of the user input
 const marvelAPIForCharacters =
   "https://gateway.marvel.com/v1/public/characters?nameStartsWith=";
 let ts = Date.now().toString();
@@ -23,23 +20,23 @@ const privateAPI = process.env.NEXT_PUBLIC_MARVEL_PRIVATE_KEY;
 let hash = getHash(ts, privateAPI, publicAPI);
 
 export default function Home() {
-  // set the user input to be used with API request
+  //PURPOSE: set the user input to be used with API request
   const [characterName, setCharacterName] = useState("");
-  // set the data to be passed to characterDisplay.js
+  //PURPOSE: set the data to be passed to characterDisplay.js
   const [data, setData] = useState([]);
 
-  // combine user input with required GET request parts, send request, and return data
+  //PURPOSE: combine user input with required GET request parts, send request, and return data
   const handleSubmit = (e) => {
     e.preventDefault();
     let url = `${marvelAPIForCharacters}${characterName}&ts=${ts}&apikey=${publicAPI}&hash=${hash}`;
     fetch(url)
       .then((res) => res.json())
       .then((json) => {
-        // verifies character exists sets data to message if not
+        //PURPOSE: verifies character exists sets data to message if not
         if (json.data.count === 0) {
           return setData(['No Character Found']);
         } else {
-          //map returns an object of set key:values for name, description and img
+          //PURPOSE: map returns an object of set key:values for name, description and img
           const characters = json.data.results.map((info) => {
             return {
               id: info.id,
@@ -48,10 +45,9 @@ export default function Home() {
               image: info.thumbnail.path + "/portrait_fantastic.jpg",
             }
           });
-          // adds attribution credit to be used per Marvel API rules
-          characters.credit = json.attributionHTML;
-          console.log(json);
-          // sets data to character so it can be passed to characterDisplay.js
+          //PURPOSE: adds attribution credit to be used per Marvel API rules
+          characters.credit = json.attributionText;
+          //PURPOSE: sets data to character so it can be passed to characterDisplay.js
           return setData(characters);
         }
       });
