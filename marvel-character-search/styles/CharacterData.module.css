@@ -1,0 +1,12 @@
+.h2{
+    border: rgb(240, 240, 240) solid;
+    padding: 1em;
+}
+
+.characterBlock{
+    border-bottom: rgb(240, 240, 240) solid;
+}
+
+.footer{
+    padding: 1em;
+}
