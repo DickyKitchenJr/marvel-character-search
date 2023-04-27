@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { Inter } from "next/font/google";
-import CharacterDisplay from "@/components/CharacterDisplay";
+import CharacterDisplay from "../components/CharacterDisplay";
 import { useState } from "react";
 import MD5 from "crypto-js/md5";
 
