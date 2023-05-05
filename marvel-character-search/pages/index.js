@@ -18,9 +18,9 @@ const publicAPI = process.env.NEXT_PUBLIC_MARVEL_PUBLIC_KEY;
 const privateAPI = process.env.NEXT_PUBLIC_MARVEL_PRIVATE_KEY;
 let hash = getHash(ts, privateAPI, publicAPI);
 
-export default function Home() {
+export default function Home(props) {
   //PURPOSE: set the user input to be used with API request
-  const [characterName, setCharacterName] = useState("");
+  const [characterName, setCharacterName] = useState("Wolverine");
   //PURPOSE: set the data to be passed to characterDisplay.js
   const [data, setData] = useState([]);
 
@@ -31,6 +31,7 @@ export default function Home() {
     fetch(url)
       .then((res) => res.json())
       .then((json) => {
+        console.log(json);
         //PURPOSE: verifies character exists sets data to message if not
         if (json.data.count === 0) {
           return setData(['No Character Found']);
@@ -66,12 +67,32 @@ export default function Home() {
           <label>Enter Character Name</label> <br /><br />
           <input
             type="text"
+            defaultValue="Wolverine"
             onChange={(e) => setCharacterName(e.target.value)}
           />
           <button type="submit">Search</button>
         </form>
-        <CharacterDisplay data = {data} />
+        <CharacterDisplay data = { characterName === "Wolverine" ? props.characters : data} />
       </main>
     </>
   );
+}
+
+export async function getStaticProps(){
+  let url = `${marvelAPIForCharacters}wolverine&ts=${ts}&apikey=${publicAPI}&hash=${hash}`;
+  const response = await fetch(url);
+  const data = await response.json();
+  const characters = data.data.results.map((info) => {
+    return {
+      id: info.id,
+      name: info.name,
+      description: info.description,
+      image: info.thumbnail.path + "/portrait_fantastic.jpg",
+    };
+  });
+  return {
+    props: {
+      characters
+    },
+  };
 }
